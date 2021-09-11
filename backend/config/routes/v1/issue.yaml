@@ -1,0 +1,17 @@
+join_or_create_issue:
+  methods:
+    - POST
+  path: /issue/{issueId}/join
+  controller: Workana\Infrastructure\Delivery\Action\V1\Issue\JoinOrCreateIssueAction
+
+vote_issue:
+  methods:
+    - POST
+  path: /issue/{issueId}/vote
+  controller: Workana\Infrastructure\Delivery\Action\V1\Issue\VoteIssueAction
+
+get_issue_status:
+  methods:
+    - GET
+  path: /issue/{issueId}
+  controller: Workana\Infrastructure\Delivery\Action\V1\Issue\GetIssueStatusAction

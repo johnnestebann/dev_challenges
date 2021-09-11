@@ -3,6 +3,7 @@ version: '3.2'
 services:
   backend:
     image: thecodingmachine/php:8.0-v4-cli
+    container_name: backend
     environment:
       STARTUP_COMMAND_1: composer install
       #Switch it on for debug
@@ -10,11 +11,9 @@ services:
     volumes:
       - "./backend/:/app"
     working_dir: /app
-    command: "php -S 0.0.0.0:8081 -t public public/index.php"
+    command: "php -S 0.0.0.0:80 -t public public/index.php"
     ports:
-      - "8081:8081"
-    expose:
-      - "8081"
+      - "80:80"
     links:
       - redis
     depends_on:
@@ -24,6 +23,7 @@ services:
 
   frontend:
     image: "node:12"
+    container_name: frontend
     volumes:
       - "./frontend/:/home/node/app"
     expose:
@@ -42,16 +42,26 @@ services:
       - challenge
 
   redis:
-    image: redis
+    image: redis:alpine
+    container_name: redis
     ports:
       - "6379:6379"
-    expose:
-      - "6379"
     volumes:
       - redis:/data
     networks:
       - challenge
 
+  commander:
+    image: rediscommander/redis-commander
+    container_name: commander
+    environment:
+      - REDIS_HOSTS=local:redis:6379:1
+    links:
+      - redis
+    ports:
+      - "8081:8081"
+    networks:
+      - challenge
 
 networks:
   challenge:
