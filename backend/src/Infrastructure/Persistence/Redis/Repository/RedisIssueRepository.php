@@ -21,19 +21,29 @@ final class RedisIssueRepository implements IssueRepositoryInterface
 		$this->cache = ($cache)();
 	}
 
-	public function save(Issue $issue): void
+	/**
+	 * @throws JsonException
+	 */
+	public function create(int $issueId): ?Issue
 	{
+		$key = 'issue#' . $issueId;
 
+		$issue = Issue::create();
+
+		$this->cache->set($key, json_encode($issue->toArray(), JSON_THROW_ON_ERROR));
+
+		return $issue;
 	}
 
 	/**
 	 * @throws JsonException
 	 */
-	public function findById(int $id): ?Issue
+	public function findById(int $issueId): ?Issue
 	{
-		$key = 'issue#' . $id;
+		$key = 'issue#' . $issueId;
+		$value = $this->cache->get($key);
 
-		if (false === $this->cache->get($key)) {
+		if (empty($value)) {
 			return null;
 		}
 

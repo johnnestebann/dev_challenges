@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Workana\Application\Service\V1\Issue;
 
-use Workana\Domain\Model\Issue\Issue;
+use Psr\Cache\InvalidArgumentException;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
-final class CreateIssueService
+final class JoinIssueService
 {
 	private IssueRepositoryInterface $repository;
 
@@ -16,8 +16,11 @@ final class CreateIssueService
 		$this->repository = $repository;
 	}
 
-	public function __invoke(int $issueId): Issue
+	/**
+	 * @throws InvalidArgumentException
+	 */
+	public function __invoke(int $issueId)
 	{
-		return $this->repository->create($issueId);
+		$this->repository->findById($issueId);
 	}
 }

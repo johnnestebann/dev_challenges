@@ -8,13 +8,15 @@ use Psr\Cache\InvalidArgumentException;
 
 interface IssueRepositoryInterface
 {
-	public function save(Issue $issue): void;
+	public function create(int $issueId): ?Issue;
 
 	/**
-	 * @param int $id
+	 * @param int $issueId
 	 * @return Issue|null
 	 * @throws InvalidArgumentException
 	 *
 	 */
-	public function findById(int $id): ?Issue;
+	public function findById(int $issueId): ?Issue;
+
+
 }

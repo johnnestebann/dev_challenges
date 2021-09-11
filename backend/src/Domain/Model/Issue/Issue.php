@@ -9,8 +9,8 @@ use JetBrains\PhpStorm\Pure;
 final class Issue
 {
 	public const STATUSES = [
-		0 => 'VOTING',
-		1 => 'REVEAL'
+		0 => 'voting',
+		1 => 'reveal'
 	];
 
 	private string $status;
@@ -19,14 +19,14 @@ final class Issue
 
 	private int $avg;
 
-	private function __construct(string $status = 'VOTING', array $members = [], int $avg = 0)
+	private function __construct(string $status = 'voting', array $members = [], int $avg = 0)
 	{
 		$this->status = $status;
 		$this->members = $members;
 		$this->avg = $avg;
 	}
 
-	#[Pure] public static function create(string $status, array $members, int $avg): self
+	#[Pure] public static function create(string $status = 'voting', array $members = [], int $avg = 0): self
 	{
 		return new self($status, $members, $avg);
 	}
@@ -61,5 +61,14 @@ final class Issue
 	public function setAvg(int $avg): void
 	{
 		$this->avg = $avg;
+	}
+
+	public function toArray(): array
+	{
+		return [
+			"status" => $this->status,
+			"members" => $this->members,
+			"avg" => $this->avg
+		];
 	}
 }
