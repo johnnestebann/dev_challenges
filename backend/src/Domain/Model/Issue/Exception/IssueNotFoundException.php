@@ -3,16 +3,16 @@
 namespace Workana\Domain\Model\Issue\Exception;
 
 use Exception;
+use JetBrains\PhpStorm\Pure;
 
 final class IssueNotFoundException extends Exception
 {
-	private const STATUS_CODE = 404;
-
+	#[Pure]
 	public function __construct(int $issueId)
 	{
 		parent::__construct(sprintf(
 			'Issue with ID: %s not found.',
 			$issueId
-		),self::STATUS_CODE);
+		));
 	}
 }

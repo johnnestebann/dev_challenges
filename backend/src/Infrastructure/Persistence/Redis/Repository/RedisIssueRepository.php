@@ -55,4 +55,16 @@ final class RedisIssueRepository implements IssueRepositoryInterface
 			$data['avg'] ?? 0
 		);
 	}
+
+	/**
+	 * @throws JsonException
+	 */
+	public function update(int $issueId, Issue $issue): void
+	{
+		$key = 'issue#' . $issueId;
+
+		$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
+
+		$this->cache->set($key, $value);
+	}
 }

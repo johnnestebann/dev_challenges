@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Workana\Domain\Model\Issue;
 
+use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
 final class Issue
 {
-	public const STATUSES = [
-		0 => 'voting',
-		1 => 'reveal'
-	];
-
 	private string $status;
 
 	private array $members;
@@ -26,7 +22,14 @@ final class Issue
 		$this->avg = $avg;
 	}
 
-	#[Pure] public static function create(string $status = 'voting', array $members = [], int $avg = 0): self
+	/**
+	 * @param string $status
+	 * @param array $members
+	 * @param int $avg
+	 * @return static
+	 */
+	#[Pure]
+	public static function create(string $status = 'voting', array $members = [], int $avg = 0): self
 	{
 		return new self($status, $members, $avg);
 	}
@@ -46,11 +49,29 @@ final class Issue
 		return $this->members;
 	}
 
-	public function addMember(array $member): void
+	public function joinMember(string $username): bool
 	{
-		if (false === in_array($member, $this->getMembers(), true)) {
-			$this->members[] = $member;
+		$joined = false;
+		$qtyMembers = count($this->members);
+		$i = 0;
+
+		while (false === $joined && $i < $qtyMembers) {
+			if ($username === $this->members[$i]['name']) {
+				$joined = true;
+			}
+
+			$i++;
 		}
+
+		if (false === $joined) {
+			$this->members[] = [
+				"name" => $username,
+				"status" => 'waiting',
+				"value" => 0
+			];
+		}
+
+		return !$joined;
 	}
 
 	public function getAvg(): int
@@ -63,6 +84,7 @@ final class Issue
 		$this->avg = $avg;
 	}
 
+	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
 	public function toArray(): array
 	{
 		return [

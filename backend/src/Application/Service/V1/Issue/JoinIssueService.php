@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Workana\Application\Service\V1\Issue;
 
-use Psr\Cache\InvalidArgumentException;
+use JsonException;
+use Workana\Domain\Model\Issue\Exception\MemberAlreadyJoinedException;
+use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
 final class JoinIssueService
@@ -17,10 +19,15 @@ final class JoinIssueService
 	}
 
 	/**
-	 * @throws InvalidArgumentException
+	 * @throws MemberAlreadyJoinedException
+	 * @throws JsonException
 	 */
-	public function __invoke(int $issueId)
+	public function __invoke(int $issueId, Issue $issue, string $username): void
 	{
-		$this->repository->findById($issueId);
+		if (false === $issue->joinMember($username)) {
+			throw new MemberAlreadyJoinedException($username, $issueId);
+		}
+
+		$this->repository->update($issueId, $issue);
 	}
 }
