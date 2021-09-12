@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Workana\Application\Service\V1\Issue;
 
-use JsonException;
+use Workana\Domain\Model\Issue\Exception\FailIssueUpdateException;
 use Workana\Domain\Model\Issue\Exception\MemberAlreadyJoinedException;
 use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
@@ -20,11 +20,11 @@ final class JoinIssueService
 
 	/**
 	 * @throws MemberAlreadyJoinedException
-	 * @throws JsonException
+	 * @throws FailIssueUpdateException
 	 */
 	public function __invoke(int $issueId, Issue $issue, string $username): void
 	{
-		if (false === $issue->joinMember($username)) {
+		if (false === $issue->addMember($username)) {
 			throw new MemberAlreadyJoinedException($username, $issueId);
 		}
 

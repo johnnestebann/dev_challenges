@@ -9,6 +9,10 @@ use JetBrains\PhpStorm\Pure;
 
 final class Issue
 {
+	public const VOTING = 'voting';
+
+	public const REVEAL = 'reveal';
+
 	private string $status;
 
 	private array $members;
@@ -49,21 +53,28 @@ final class Issue
 		return $this->members;
 	}
 
-	public function joinMember(string $username): bool
+	public function hasMember(string $username): bool
 	{
-		$joined = false;
+		$isMember = false;
 		$qtyMembers = count($this->members);
 		$i = 0;
 
-		while (false === $joined && $i < $qtyMembers) {
+		while (false === $isMember && $i < $qtyMembers) {
 			if ($username === $this->members[$i]['name']) {
-				$joined = true;
+				$isMember = true;
 			}
 
 			$i++;
 		}
 
-		if (false === $joined) {
+		return $isMember;
+	}
+
+	public function addMember(string $username): bool
+	{
+		$isMember = $this->hasMember($username);
+
+		if (false === $isMember) {
 			$this->members[] = [
 				"name" => $username,
 				"status" => 'waiting',
@@ -71,7 +82,45 @@ final class Issue
 			];
 		}
 
-		return !$joined;
+		return !$isMember;
+	}
+
+	public function memberAlreadyVotedOrPassed(string $username): bool
+	{
+		$alreadyVotedOrPassed = false;
+		$qtyMembers = count($this->members);
+		$i = 0;
+
+		while (false === $alreadyVotedOrPassed && $i < $qtyMembers) {
+			if (
+				($username === $this->members[$i]['name']) &&
+				('waiting' !== $this->members[$i]['status'])
+			) {
+				$alreadyVotedOrPassed = true;
+			}
+
+			$i++;
+		}
+
+		return $alreadyVotedOrPassed;
+	}
+
+	/**
+	 * TODO change members array structure adding username as key
+	 *
+	 *
+	 * @param string $username
+	 * @param int $vote
+	 */
+	public function memberVote(string $username, int $vote): void
+	{
+		$data = [
+			'name' => $username,
+			'status' => 'voted',
+			'value' => $vote
+		];
+
+
 	}
 
 	public function getAvg(): int

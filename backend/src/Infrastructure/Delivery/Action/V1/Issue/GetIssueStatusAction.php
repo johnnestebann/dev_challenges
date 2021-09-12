@@ -4,40 +4,39 @@ declare(strict_types=1);
 
 namespace Workana\Infrastructure\Delivery\Action\V1\Issue;
 
+use Exception;
 use Workana\Application\Service\V1\Issue\GetIssueByIdService;
-use Workana\Domain\Model\Issue\Exception\IssueNotFoundException;
+use Workana\Infrastructure\Delivery\Response\Json\V1\Error\ErrorJsonResponse;
 use Workana\Infrastructure\Delivery\Response\Json\V1\Issue\IssueJsonResponse;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class GetIssueStatusAction
 {
 	private GetIssueByIdService $getIssueByIdService;
 
-	private IssueJsonResponse $jsonResponse;
+	private ErrorJsonResponse $errorJsonResponse;
+
+	private IssueJsonResponse $issueJsonResponse;
 
 	public function __construct(
 		GetIssueByIdService $getIssueByIdService,
-		IssueJsonResponse   $jsonResponse
+		ErrorJsonResponse $errorJsonResponse,
+		IssueJsonResponse $issueJsonResponse
 	)
 	{
 		$this->getIssueByIdService = $getIssueByIdService;
-		$this->jsonResponse = $jsonResponse;
+		$this->errorJsonResponse = $errorJsonResponse;
+		$this->issueJsonResponse = $issueJsonResponse;
 	}
 
-	/**
-	 * @throws IssueNotFoundException
-	 * @throws InvalidArgumentException
-	 */
 	public function __invoke(int $issueId): JsonResponse
 	{
-		$issue = ($this->getIssueByIdService)($issueId);
-
-		if (null === $issue) {
-			// TODO create middleware to response errors
-			throw new IssueNotFoundException($issueId);
+		try {
+			$issue = ($this->getIssueByIdService)($issueId);
+		} catch (Exception $e) {
+			return ($this->errorJsonResponse)($e->getMessage());
 		}
 
-		return ($this->jsonResponse)($issue);
+		return ($this->issueJsonResponse)($issue);
 	}
 }

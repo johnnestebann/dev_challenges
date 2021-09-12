@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Workana\Application\Service\V1\Issue;
 
+use Workana\Domain\Model\Issue\Exception\IssueNotFoundException;
 use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
-use Psr\Cache\InvalidArgumentException;
 
 final class GetIssueByIdService
 {
@@ -18,9 +18,9 @@ final class GetIssueByIdService
 	}
 
 	/**
-	 * @throws InvalidArgumentException
+	 * @throws IssueNotFoundException
 	 */
-	public function __invoke(int $issueId): ?Issue
+	public function __invoke(int $issueId): Issue
 	{
 		return $this->repository->findById($issueId);
 	}

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Workana\Infrastructure\Delivery\Action\V1\Issue;
 
 use Exception;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Workana\Application\Service\V1\Issue\CreateIssueService;
@@ -47,9 +46,6 @@ final class JoinOrCreateIssueAction
 		$this->issueJsonResponse = $issueJsonResponse;
 	}
 
-	/**
-	 * @throws InvalidArgumentException
-	 */
 	public function __invoke(int $issueId, Request $request): JsonResponse
 	{
 		try {
@@ -59,9 +55,9 @@ final class JoinOrCreateIssueAction
 				throw new InvalidMemberException();
 			}
 
-			$issue = ($this->getIssueByIdService)($issueId);
-
-			if (null === $issue) {
+			try {
+				$issue = ($this->getIssueByIdService)($issueId);
+			} catch (Exception) {
 				$issue = ($this->createIssueService)($issueId);
 			}
 

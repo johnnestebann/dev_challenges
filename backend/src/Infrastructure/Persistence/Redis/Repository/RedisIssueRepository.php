@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace Workana\Infrastructure\Persistence\Redis\Repository;
 
+use Exception;
+use Workana\Domain\Model\Issue\Exception\FailIssueCreationException;
+use Workana\Domain\Model\Issue\Exception\FailIssueUpdateException;
+use Workana\Domain\Model\Issue\Exception\IssueNotFoundException;
 use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 use Workana\Infrastructure\Persistence\Redis\Service\RedisConnectionService;
-use JsonException;
 use Redis;
 
 final class RedisIssueRepository implements IssueRepositoryInterface
@@ -22,49 +25,67 @@ final class RedisIssueRepository implements IssueRepositoryInterface
 	}
 
 	/**
-	 * @throws JsonException
+	 * @throws FailIssueCreationException
 	 */
-	public function create(int $issueId): ?Issue
+	public function create(int $issueId): Issue
 	{
-		$key = 'issue#' . $issueId;
+		try {
+			$issue = Issue::create();
 
-		$issue = Issue::create();
+			$key = 'issue#' . $issueId;
+			$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
 
-		$this->cache->set($key, json_encode($issue->toArray(), JSON_THROW_ON_ERROR));
+			if (false === $this->cache->set($key, $value)) {
+				throw new Exception();
+			}
 
-		return $issue;
+			return $issue;
+		} catch (Exception) {
+			throw new FailIssueCreationException();
+		}
 	}
 
 	/**
-	 * @throws JsonException
+	 * @throws IssueNotFoundException
 	 */
-	public function findById(int $issueId): ?Issue
+	public function findById(int $issueId): Issue
 	{
-		$key = 'issue#' . $issueId;
-		$value = $this->cache->get($key);
+		try {
+			$key = 'issue#' . $issueId;
+			$value = $this->cache->get($key);
 
-		if (empty($value)) {
-			return null;
+			if (empty($value)) {
+				throw new Exception();
+			}
+
+			$data = json_decode($value, true, 512, JSON_THROW_ON_ERROR);
+
+			return Issue::create(
+				$data['status'] ?? '',
+				$data['members'] ?? [],
+				$data['avg'] ?? 0
+			);
+		} catch (Exception) {
+			throw new IssueNotFoundException($issueId);
 		}
 
-		$data = json_decode($this->cache->get($key), true, 512, JSON_THROW_ON_ERROR);
-
-		return Issue::create(
-			$data['status'] ?? '',
-			$data['members'] ?? [],
-			$data['avg'] ?? 0
-		);
 	}
 
 	/**
-	 * @throws JsonException
+	 * @throws FailIssueUpdateException
 	 */
 	public function update(int $issueId, Issue $issue): void
 	{
-		$key = 'issue#' . $issueId;
+		try {
+			$key = 'issue#' . $issueId;
+			$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
 
-		$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
+			if (false === $this->cache->set($key, $value)) {
+				throw new Exception();
+			}
 
-		$this->cache->set($key, $value);
+		} catch (Exception) {
+			throw new FailIssueUpdateException();
+		}
 	}
 }
