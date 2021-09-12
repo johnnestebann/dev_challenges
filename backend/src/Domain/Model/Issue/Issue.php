@@ -9,8 +9,6 @@ use JetBrains\PhpStorm\Pure;
 
 final class Issue
 {
-	public const VOTING = 'voting';
-
 	public const REVEAL = 'reveal';
 
 	private string $status;
@@ -48,11 +46,6 @@ final class Issue
 		$this->status = $status;
 	}
 
-	public function getMembers(): array
-	{
-		return $this->members;
-	}
-
 	public function hasMember(string $username): bool
 	{
 		return array_key_exists($username, $this->members);
@@ -76,39 +69,45 @@ final class Issue
 	{
 		$alreadyVotedOrPassed = false;
 
-		if ('waiting' !== $this->members[$username]['status'])
-		{
+		if ('waiting' !== $this->members[$username]['status']) {
 			$alreadyVotedOrPassed = true;
 		}
 
 		return $alreadyVotedOrPassed;
 	}
 
+	/**
+	 * TODO if all members finish their vote, change issue status and show hidden
+	 */
 	public function memberVote(string $username, int $vote): void
 	{
 		$this->members[$username] = [
 			'status' => 'voted',
 			'value' => $vote
 		];
+
+		$this->avg += $vote;
 	}
 
-	public function getAvg(): int
-	{
-		return $this->avg;
-	}
-
-	public function setAvg(int $avg): void
-	{
-		$this->avg = $avg;
-	}
-
+	/**
+	 * TODO hide or show data by issue status
+	 */
 	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
-	public function toArray(): array
+	public function toArrayFull(): array
 	{
 		return [
 			"status" => $this->status,
 			"members" => $this->members,
 			"avg" => $this->avg
+		];
+	}
+
+	#[ArrayShape(["status" => "string", "members" => "array"])]
+	public function toArrayHidden(): array
+	{
+		return [
+			"status" => $this->status,
+			"members" => $this->members
 		];
 	}
 }

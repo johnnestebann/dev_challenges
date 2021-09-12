@@ -13,11 +13,8 @@ final class IssueJsonResponse extends JsonResponse
 	{
 		return new JsonResponse([
 			'status' => 'OK',
-			'data' => [
-				'status' => $issue->getStatus(),
-				'members' => $issue->getMembers(),
-				'avg' => $issue->getAvg()
-			]
+			'data' => Issue::REVEAL === $issue->getStatus() ?
+				$issue->toArrayFull() : $issue->toArrayHidden()
 		]);
 	}
 }

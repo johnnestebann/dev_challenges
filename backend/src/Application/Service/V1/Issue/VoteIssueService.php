@@ -38,6 +38,22 @@ final class VoteIssueService
 	{
 		$issue = ($this->getIssueByIdService)($issueId);
 
+		$this->validation($issue, $username, $issueId);
+
+		$issue->memberVote($username, $vote);
+
+		$this->repository->update($issueId, $issue);
+
+		return $issue;
+	}
+
+	/**
+	 * @throws IssueNotVotingException
+	 * @throws MemberNotJoinedToIssueException
+	 * @throws MemberAlreadyVotedOrPassedIssueException
+	 */
+	private function validation(Issue $issue, string $username, int $issueId): void
+	{
 		if (Issue::REVEAL === $issue->getStatus()) {
 			throw new IssueNotVotingException($issueId);
 		}
@@ -49,11 +65,5 @@ final class VoteIssueService
 		if ($issue->memberAlreadyVotedOrPassed($username)) {
 			throw new MemberAlreadyVotedOrPassedIssueException($username, $issueId);
 		}
-
-		$issue->memberVote($username, $vote);
-
-		$this->repository->update($issueId, $issue);
-
-		return $issue;
 	}
 }
