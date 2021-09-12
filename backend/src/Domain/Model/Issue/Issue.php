@@ -55,19 +55,7 @@ final class Issue
 
 	public function hasMember(string $username): bool
 	{
-		$isMember = false;
-		$qtyMembers = count($this->members);
-		$i = 0;
-
-		while (false === $isMember && $i < $qtyMembers) {
-			if ($username === $this->members[$i]['name']) {
-				$isMember = true;
-			}
-
-			$i++;
-		}
-
-		return $isMember;
+		return array_key_exists($username, $this->members);
 	}
 
 	public function addMember(string $username): bool
@@ -75,8 +63,7 @@ final class Issue
 		$isMember = $this->hasMember($username);
 
 		if (false === $isMember) {
-			$this->members[] = [
-				"name" => $username,
+			$this->members[$username] = [
 				"status" => 'waiting',
 				"value" => 0
 			];
@@ -88,39 +75,21 @@ final class Issue
 	public function memberAlreadyVotedOrPassed(string $username): bool
 	{
 		$alreadyVotedOrPassed = false;
-		$qtyMembers = count($this->members);
-		$i = 0;
 
-		while (false === $alreadyVotedOrPassed && $i < $qtyMembers) {
-			if (
-				($username === $this->members[$i]['name']) &&
-				('waiting' !== $this->members[$i]['status'])
-			) {
-				$alreadyVotedOrPassed = true;
-			}
-
-			$i++;
+		if ('waiting' !== $this->members[$username]['status'])
+		{
+			$alreadyVotedOrPassed = true;
 		}
 
 		return $alreadyVotedOrPassed;
 	}
 
-	/**
-	 * TODO change members array structure adding username as key
-	 *
-	 *
-	 * @param string $username
-	 * @param int $vote
-	 */
 	public function memberVote(string $username, int $vote): void
 	{
-		$data = [
-			'name' => $username,
+		$this->members[$username] = [
 			'status' => 'voted',
 			'value' => $vote
 		];
-
-
 	}
 
 	public function getAvg(): int
