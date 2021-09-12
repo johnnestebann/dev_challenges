@@ -31,7 +31,7 @@ final class RedisIssueRepository implements IssueRepositoryInterface
 			$issue = Issue::create();
 
 			$key = 'issue#' . $issueId;
-			$value = json_encode($issue->toArrayFull(), JSON_THROW_ON_ERROR);
+			$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
 
 			if (false === $this->cache->set($key, $value)) {
 				throw new Exception();
@@ -75,7 +75,7 @@ final class RedisIssueRepository implements IssueRepositoryInterface
 	{
 		try {
 			$key = 'issue#' . $issueId;
-			$value = json_encode($issue->toArrayFull(), JSON_THROW_ON_ERROR);
+			$value = json_encode($issue->toArray(), JSON_THROW_ON_ERROR);
 
 			if (false === $this->cache->set($key, $value)) {
 				throw new Exception();

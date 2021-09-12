@@ -11,6 +11,8 @@ final class Issue
 {
 	public const REVEAL = 'reveal';
 
+	public const VOTING = 'voting';
+
 	private string $status;
 
 	private array $members;
@@ -46,6 +48,17 @@ final class Issue
 		$this->status = $status;
 	}
 
+	public function getMembers(): array
+	{
+		if (self::VOTING === $this->status) {
+			foreach ($this->members as &$member) {
+				$member['value'] = 0;
+			}
+		}
+
+		return $this->members;
+	}
+
 	public function hasMember(string $username): bool
 	{
 		return array_key_exists($username, $this->members);
@@ -76,9 +89,7 @@ final class Issue
 		return $alreadyVotedOrPassed;
 	}
 
-	/**
-	 * TODO if all members finish their vote, change issue status and show hidden
-	 */
+	// TODO members vote doesnt save
 	public function memberVote(string $username, int $vote): void
 	{
 		$this->members[$username] = [
@@ -86,28 +97,38 @@ final class Issue
 			'value' => $vote
 		];
 
-		$this->avg += $vote;
+		$this->avg += (int) ($vote / count($this->members));
+
+		if (true === $this->allMemberHasVoted()) {
+			$this->status = self::REVEAL;
+		}
 	}
 
-	/**
-	 * TODO hide or show data by issue status
-	 */
+	private function allMemberHasVoted(): bool
+	{
+		$voteFinished = true;
+
+		foreach ($this->members as $member) {
+			if ('voted' !== $member['status']) {
+				$voteFinished = false;
+			}
+		}
+
+		return $voteFinished;
+	}
+
+	private function getAvg(): int
+	{
+		return self::VOTING === $this->status ? 0 : $this->avg;
+	}
+
 	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
-	public function toArrayFull(): array
+	public function toArray(): array
 	{
 		return [
 			"status" => $this->status,
-			"members" => $this->members,
-			"avg" => $this->avg
-		];
-	}
-
-	#[ArrayShape(["status" => "string", "members" => "array"])]
-	public function toArrayHidden(): array
-	{
-		return [
-			"status" => $this->status,
-			"members" => $this->members
+			"members" => $this->getMembers(),
+			"avg" => $this->getAvg()
 		];
 	}
 }
