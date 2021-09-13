@@ -6,7 +6,7 @@ namespace Workana\Infrastructure\Delivery\Request;
 
 use JsonException;
 
-final class PayloadRequestParserService
+class PayloadRequestParserService
 {
 	/**
 	 * @throws JsonException

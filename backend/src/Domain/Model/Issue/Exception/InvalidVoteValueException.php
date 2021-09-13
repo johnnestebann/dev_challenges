@@ -12,6 +12,6 @@ final class InvalidVoteValueException extends Exception
 	#[Pure]
 	public function __construct()
 	{
-		parent::__construct('Invalid vote value');
+		parent::__construct('Invalid vote value.');
 	}
 }

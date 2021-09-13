@@ -12,6 +12,6 @@ final class InvalidMemberException extends Exception
 	#[Pure]
 	public function __construct()
 	{
-		parent::__construct('Invalid member');
+		parent::__construct('Invalid member.');
 	}
 }

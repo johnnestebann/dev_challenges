@@ -8,7 +8,7 @@ use Workana\Domain\Model\Issue\Exception\IssueNotFoundException;
 use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
-final class GetIssueByIdService
+class GetIssueByIdService
 {
 	private IssueRepositoryInterface $repository;
 

@@ -12,7 +12,7 @@ class MemberAlreadyJoinedException extends Exception
 	{
 		parent::__construct(
 			sprintf(
-				'Member \'%s\' already joined to Issue with ID \'%s\'',
+				'Member \'%s\' already joined to Issue with ID \'%s\'.',
 				$username,
 				$issueId
 			)

@@ -12,7 +12,7 @@ use Workana\Domain\Model\Issue\Exception\MemberNotJoinedToIssueException;
 use Workana\Domain\Model\Issue\Issue;
 use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
-final class VoteIssueService
+class VoteIssueService
 {
 	private GetIssueByIdService $getIssueByIdService;
 
