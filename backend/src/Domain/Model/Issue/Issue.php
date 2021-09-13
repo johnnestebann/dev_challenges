@@ -89,15 +89,21 @@ class Issue
 		return $alreadyVotedOrPassed;
 	}
 
-	// TODO members vote doesnt save
 	public function memberVote(string $username, int $vote): void
 	{
-		$this->members[$username] = [
-			'status' => 'voted',
-			'value' => $vote
-		];
+		if (-1 === $vote) {
+			$this->members[$username] = [
+				'status' => 'passed',
+				'value' => -1
+			];
+		} else {
+			$this->members[$username] = [
+				'status' => 'voted',
+				'value' => $vote
+			];
+		}
 
-		$this->avg += (int) ($vote / count($this->members));
+		$this->setAvg();
 
 		if (true === $this->allMemberHasVoted()) {
 			$this->status = self::REVEAL;
@@ -109,8 +115,9 @@ class Issue
 		$voteFinished = true;
 
 		foreach ($this->members as $member) {
-			if ('voted' !== $member['status']) {
+			if ('waiting' === $member['status']) {
 				$voteFinished = false;
+				break;
 			}
 		}
 
@@ -120,6 +127,21 @@ class Issue
 	public function getAvg(): int
 	{
 		return self::VOTING === $this->status ? 0 : $this->avg;
+	}
+
+	private function setAvg(): void
+	{
+		$validMembers = 0;
+		$avg = 0;
+
+		foreach ($this->members as $member) {
+			if ('voted' === $member['status']) {
+				$avg += $member['value'];
+				$validMembers++;
+			}
+		}
+
+		$this->avg = 0 !== $validMembers ? (int) ($avg / $validMembers) : 0;
 	}
 
 	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
