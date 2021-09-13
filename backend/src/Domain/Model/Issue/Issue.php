@@ -7,7 +7,7 @@ namespace Workana\Domain\Model\Issue;
 use JetBrains\PhpStorm\ArrayShape;
 use JetBrains\PhpStorm\Pure;
 
-final class Issue
+class Issue
 {
 	public const REVEAL = 'reveal';
 
@@ -117,9 +117,19 @@ final class Issue
 		return $voteFinished;
 	}
 
-	private function getAvg(): int
+	public function getAvg(): int
 	{
 		return self::VOTING === $this->status ? 0 : $this->avg;
+	}
+
+	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
+	public function toFullArray(): array
+	{
+		return [
+			"status" => $this->status,
+			"members" => $this->members,
+			"avg" => $this->avg
+		];
 	}
 
 	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
