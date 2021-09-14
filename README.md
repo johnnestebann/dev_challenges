@@ -63,6 +63,16 @@ Check if services are up and running:
          }
         ````
 
+### Query with CURL
+- #### Join Member 'Fernando' to Issue #1
+  - `curl -d '{"name":"Fernando"}' -H 'Content-Type: application/json' http://localhost/api/v1/issue/1/join`
+- #### Member Fernando vote 12 on Issue #1
+  - `curl -d '{"name":"Fernando", "vote": 12}' -H 'Content-Type: application/json' http://localhost/api/v1/issue/1/vote`
+- #### Member Fernando passed on Issue #1
+  - `curl -d '{"name":"Fernando", "vote": -1}' -H 'Content-Type: application/json' http://localhost/api/v1/issue/1/vote`
+- #### Get Issue #1 status
+  - `curl http://localhost/api/v1/issue/1`
+
 ### Tools
 - #### PHPUnit
   - Run `make test`
