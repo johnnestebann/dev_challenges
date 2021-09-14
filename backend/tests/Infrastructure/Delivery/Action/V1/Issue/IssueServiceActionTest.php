@@ -18,48 +18,48 @@ use Workana\Infrastructure\Delivery\Response\Json\V1\Issue\IssueJsonResponse;
 
 abstract class IssueServiceActionTest extends TestCase
 {
-	protected MockObject|IssueRepositoryInterface $issueRepository;
+    protected MockObject|IssueRepositoryInterface $issueRepository;
 
-	protected MockObject|GetIssueByIdService $getIssueByIdService;
+    protected MockObject|GetIssueByIdService $getIssueByIdService;
 
-	protected MockObject|PayloadRequestParserService $payloadRequestParserService;
+    protected MockObject|PayloadRequestParserService $payloadRequestParserService;
 
-	protected MockObject|VoteIssueService $voteIssueService;
+    protected MockObject|VoteIssueService $voteIssueService;
 
-	protected GetIssueStatusAction $getIssueStatusAction;
+    protected GetIssueStatusAction $getIssueStatusAction;
 
-	protected JoinOrCreateIssueAction $joinOrCreateIssueAction;
+    protected JoinOrCreateIssueAction $joinOrCreateIssueAction;
 
-	protected VoteIssueAction $voteIssueAction;
+    protected VoteIssueAction $voteIssueAction;
 
-	protected function setUp(): void
-	{
-		$this->issueRepository = $this->createMock(IssueRepositoryInterface::class);
+    protected function setUp(): void
+    {
+        $this->issueRepository = $this->createMock(IssueRepositoryInterface::class);
 
-		$this->payloadRequestParserService = $this->createMock(PayloadRequestParserService::class);
-		$this->getIssueByIdService = $this->createMock(GetIssueByIdService::class);
-		$this->voteIssueService = $this->createMock(VoteIssueService::class);
+        $this->payloadRequestParserService = $this->createMock(PayloadRequestParserService::class);
+        $this->getIssueByIdService = $this->createMock(GetIssueByIdService::class);
+        $this->voteIssueService = $this->createMock(VoteIssueService::class);
 
-		$this->getIssueStatusAction = new GetIssueStatusAction(
-			new GetIssueByIdService($this->issueRepository),
-			new ErrorJsonResponse(),
-			new IssueJsonResponse()
-		);
+        $this->getIssueStatusAction = new GetIssueStatusAction(
+            new GetIssueByIdService($this->issueRepository),
+            new ErrorJsonResponse(),
+            new IssueJsonResponse()
+        );
 
-		$this->joinOrCreateIssueAction = new JoinOrCreateIssueAction(
-			$this->getIssueByIdService,
-			new CreateIssueService($this->issueRepository),
-			$this->payloadRequestParserService,
-			new JoinIssueService($this->issueRepository),
-			new ErrorJsonResponse(),
-			new IssueJsonResponse()
-		);
+        $this->joinOrCreateIssueAction = new JoinOrCreateIssueAction(
+            $this->getIssueByIdService,
+            new CreateIssueService($this->issueRepository),
+            $this->payloadRequestParserService,
+            new JoinIssueService($this->issueRepository),
+            new ErrorJsonResponse(),
+            new IssueJsonResponse()
+        );
 
-		$this->voteIssueAction = new VoteIssueAction(
-			$this->payloadRequestParserService,
-			$this->voteIssueService,
-			new ErrorJsonResponse(),
-			new IssueJsonResponse()
-		);
-	}
+        $this->voteIssueAction = new VoteIssueAction(
+            $this->payloadRequestParserService,
+            $this->voteIssueService,
+            new ErrorJsonResponse(),
+            new IssueJsonResponse()
+        );
+    }
 }

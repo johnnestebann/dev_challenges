@@ -16,45 +16,44 @@ use Workana\Infrastructure\Delivery\Response\Json\V1\Issue\IssueJsonResponse;
 
 final class VoteIssueAction
 {
-	private PayloadRequestParserService $payloadRequestParserService;
+    private PayloadRequestParserService $payloadRequestParserService;
 
-	private VoteIssueService $voteIssueService;
+    private VoteIssueService $voteIssueService;
 
-	private ErrorJsonResponse $errorJsonResponse;
+    private ErrorJsonResponse $errorJsonResponse;
 
-	private IssueJsonResponse $issueJsonResponse;
+    private IssueJsonResponse $issueJsonResponse;
 
-	public function __construct(
-		PayloadRequestParserService $payloadRequestParserService,
-		VoteIssueService $voteIssueService,
-		ErrorJsonResponse $errorJsonResponse,
-		IssueJsonResponse $issueJsonResponse
-	)
-	{
-		$this->payloadRequestParserService = $payloadRequestParserService;
-		$this->voteIssueService = $voteIssueService;
-		$this->errorJsonResponse = $errorJsonResponse;
-		$this->issueJsonResponse = $issueJsonResponse;
-	}
+    public function __construct(
+        PayloadRequestParserService $payloadRequestParserService,
+        VoteIssueService $voteIssueService,
+        ErrorJsonResponse $errorJsonResponse,
+        IssueJsonResponse $issueJsonResponse
+    ) {
+        $this->payloadRequestParserService = $payloadRequestParserService;
+        $this->voteIssueService = $voteIssueService;
+        $this->errorJsonResponse = $errorJsonResponse;
+        $this->issueJsonResponse = $issueJsonResponse;
+    }
 
-	public function __invoke(int $issueId, Request $request): JsonResponse
-	{
-		try {
-			$data = ($this->payloadRequestParserService)((string) $request->getContent());
+    public function __invoke(int $issueId, Request $request): JsonResponse
+    {
+        try {
+            $data = ($this->payloadRequestParserService)((string)$request->getContent());
 
-			if (empty($data) || empty($data['vote'])) {
-				throw new InvalidVoteValueException();
-			}
+            if (empty($data) || empty($data['vote'])) {
+                throw new InvalidVoteValueException();
+            }
 
-			if (empty($data['name'])) {
-				throw new InvalidMemberException();
-			}
+            if (empty($data['name'])) {
+                throw new InvalidMemberException();
+            }
 
-			$issue = ($this->voteIssueService)($issueId, $data['name'], $data['vote']);
-		} catch (Exception $e) {
-			return ($this->errorJsonResponse)($e->getMessage());
-		}
+            $issue = ($this->voteIssueService)($issueId, $data['name'], $data['vote']);
+        } catch (Exception $e) {
+            return ($this->errorJsonResponse)($e->getMessage());
+        }
 
-		return ($this->issueJsonResponse)($issue);
-	}
+        return ($this->issueJsonResponse)($issue);
+    }
 }

@@ -8,8 +8,8 @@ use Exception;
 
 final class InvalidMemberException extends Exception
 {
-	public function __construct()
-	{
-		parent::__construct('Invalid member.');
-	}
+    public function __construct()
+    {
+        parent::__construct('Invalid member.');
+    }
 }

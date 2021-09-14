@@ -12,20 +12,20 @@ use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
 abstract class IssueServiceTest extends TestCase
 {
-	protected MockObject|IssueRepositoryInterface $issueRepository;
+    protected MockObject|IssueRepositoryInterface $issueRepository;
 
-	protected MockObject|GetIssueByIdService $getIssueByIdService;
+    protected MockObject|GetIssueByIdService $getIssueByIdService;
 
-	protected VoteIssueService $voteIssueService;
+    protected VoteIssueService $voteIssueService;
 
-	protected function setUp(): void
-	{
-		$this->issueRepository = $this->createMock(IssueRepositoryInterface::class);
-		$this->getIssueByIdService = $this->createMock(GetIssueByIdService::class);
+    protected function setUp(): void
+    {
+        $this->issueRepository = $this->createMock(IssueRepositoryInterface::class);
+        $this->getIssueByIdService = $this->createMock(GetIssueByIdService::class);
 
-		$this->voteIssueService = new VoteIssueService(
-			$this->getIssueByIdService,
-			$this->issueRepository
-		);
-	}
+        $this->voteIssueService = new VoteIssueService(
+            $this->getIssueByIdService,
+            $this->issueRepository
+        );
+    }
 }

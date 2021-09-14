@@ -8,14 +8,14 @@ use Exception;
 
 class MemberAlreadyJoinedException extends Exception
 {
-	public function __construct(string $username, int $issueId)
-	{
-		parent::__construct(
-			sprintf(
-				'Member \'%s\' already joined to Issue with ID \'%s\'.',
-				$username,
-				$issueId
-			)
-		);
-	}
+    public function __construct(string $username, int $issueId)
+    {
+        parent::__construct(
+            sprintf(
+                'Member \'%s\' already joined to Issue with ID \'%s\'.',
+                $username,
+                $issueId
+            )
+        );
+    }
 }

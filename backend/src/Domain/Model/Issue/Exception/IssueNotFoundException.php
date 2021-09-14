@@ -8,11 +8,11 @@ use Exception;
 
 final class IssueNotFoundException extends Exception
 {
-	public function __construct(int $issueId)
-	{
-		parent::__construct(sprintf(
-			'Issue with ID: %s not found.',
-			$issueId
-		));
-	}
+    public function __construct(int $issueId)
+    {
+        parent::__construct(sprintf(
+            'Issue with ID: %s not found.',
+            $issueId
+        ));
+    }
 }

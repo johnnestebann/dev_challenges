@@ -6,7 +6,7 @@ use ReflectionClass;
 
 class Mother
 {
-	protected static function setProperties(ReflectionClass $reflectionClass, $aInstance, array $data): void
+    protected static function setProperties(ReflectionClass $reflectionClass, $aInstance, array $data): void
     {
         foreach ($reflectionClass->getProperties() as $property) {
             if (true === isset($data[$property->getName()])) {

@@ -8,8 +8,8 @@ use Exception;
 
 final class InvalidVoteValueException extends Exception
 {
-	public function __construct()
-	{
-		parent::__construct('Invalid vote value.');
-	}
+    public function __construct()
+    {
+        parent::__construct('Invalid vote value.');
+    }
 }

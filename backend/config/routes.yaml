@@ -1,4 +1,4 @@
 api_v1:
-    resource: './routes/v1/'
-    type: directory
-    prefix: /api/v1
+  resource: './routes/v1/'
+  type: directory
+  prefix: /api/v1

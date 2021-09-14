@@ -14,56 +14,55 @@ use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
 class VoteIssueService
 {
-	private GetIssueByIdService $getIssueByIdService;
+    private GetIssueByIdService $getIssueByIdService;
 
-	private IssueRepositoryInterface $repository;
+    private IssueRepositoryInterface $repository;
 
-	public function __construct(
-		GetIssueByIdService      $getIssueByIdService,
-		IssueRepositoryInterface $repository
-	)
-	{
-		$this->getIssueByIdService = $getIssueByIdService;
-		$this->repository = $repository;
-	}
+    public function __construct(
+        GetIssueByIdService $getIssueByIdService,
+        IssueRepositoryInterface $repository
+    ) {
+        $this->getIssueByIdService = $getIssueByIdService;
+        $this->repository = $repository;
+    }
 
-	/**
-	 * @throws IssueNotFoundException
-	 * @throws IssueNotVotingException
-	 * @throws MemberNotJoinedToIssueException
-	 * @throws MemberAlreadyVotedOrPassedIssueException
-	 * @throws FailIssueUpdateException
-	 */
-	public function __invoke(int $issueId, string $username, int $vote): Issue
-	{
-		$issue = ($this->getIssueByIdService)($issueId);
+    /**
+     * @throws IssueNotFoundException
+     * @throws IssueNotVotingException
+     * @throws MemberNotJoinedToIssueException
+     * @throws MemberAlreadyVotedOrPassedIssueException
+     * @throws FailIssueUpdateException
+     */
+    public function __invoke(int $issueId, string $username, int $vote): Issue
+    {
+        $issue = ($this->getIssueByIdService)($issueId);
 
-		$this->validation($issue, $username, $issueId);
+        $this->validation($issue, $username, $issueId);
 
-		$issue->memberVote($username, $vote);
+        $issue->memberVote($username, $vote);
 
-		$this->repository->update($issueId, $issue);
+        $this->repository->update($issueId, $issue);
 
-		return $issue;
-	}
+        return $issue;
+    }
 
-	/**
-	 * @throws IssueNotVotingException
-	 * @throws MemberNotJoinedToIssueException
-	 * @throws MemberAlreadyVotedOrPassedIssueException
-	 */
-	private function validation(Issue $issue, string $username, int $issueId): void
-	{
-		if (Issue::REVEAL === $issue->getStatus()) {
-			throw new IssueNotVotingException($issueId);
-		}
+    /**
+     * @throws IssueNotVotingException
+     * @throws MemberNotJoinedToIssueException
+     * @throws MemberAlreadyVotedOrPassedIssueException
+     */
+    private function validation(Issue $issue, string $username, int $issueId): void
+    {
+        if (Issue::REVEAL === $issue->getStatus()) {
+            throw new IssueNotVotingException($issueId);
+        }
 
-		if (false === $issue->hasMember($username)) {
-			throw new MemberNotJoinedToIssueException($username, $issueId);
-		}
+        if (false === $issue->hasMember($username)) {
+            throw new MemberNotJoinedToIssueException($username, $issueId);
+        }
 
-		if ($issue->memberAlreadyVotedOrPassed($username)) {
-			throw new MemberAlreadyVotedOrPassedIssueException($username, $issueId);
-		}
-	}
+        if ($issue->memberAlreadyVotedOrPassed($username)) {
+            throw new MemberAlreadyVotedOrPassedIssueException($username, $issueId);
+        }
+    }
 }

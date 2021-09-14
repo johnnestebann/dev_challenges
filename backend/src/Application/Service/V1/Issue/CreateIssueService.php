@@ -10,18 +10,18 @@ use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
 final class CreateIssueService
 {
-	private IssueRepositoryInterface $repository;
+    private IssueRepositoryInterface $repository;
 
-	public function __construct(IssueRepositoryInterface $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(IssueRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	/**
-	 * @throws FailIssueCreationException
-	 */
-	public function __invoke(int $issueId): Issue
-	{
-		return $this->repository->create($issueId);
-	}
+    /**
+     * @throws FailIssueCreationException
+     */
+    public function __invoke(int $issueId): Issue
+    {
+        return $this->repository->create($issueId);
+    }
 }

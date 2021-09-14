@@ -10,18 +10,18 @@ use Workana\Domain\Model\Issue\IssueRepositoryInterface;
 
 class GetIssueByIdService
 {
-	private IssueRepositoryInterface $repository;
+    private IssueRepositoryInterface $repository;
 
-	public function __construct(IssueRepositoryInterface $repository)
-	{
-		$this->repository = $repository;
-	}
+    public function __construct(IssueRepositoryInterface $repository)
+    {
+        $this->repository = $repository;
+    }
 
-	/**
-	 * @throws IssueNotFoundException
-	 */
-	public function __invoke(int $issueId): Issue
-	{
-		return $this->repository->findById($issueId);
-	}
+    /**
+     * @throws IssueNotFoundException
+     */
+    public function __invoke(int $issueId): Issue
+    {
+        return $this->repository->findById($issueId);
+    }
 }

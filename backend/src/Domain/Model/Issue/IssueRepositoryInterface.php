@@ -10,24 +10,24 @@ use Workana\Domain\Model\Issue\Exception\IssueNotFoundException;
 
 interface IssueRepositoryInterface
 {
-	/**
-	 * @param int $issueId
-	 * @return Issue
-	 * @throws FailIssueCreationException
-	 */
-	public function create(int $issueId): Issue;
+    /**
+     * @param int $issueId
+     * @return Issue
+     * @throws FailIssueCreationException
+     */
+    public function create(int $issueId): Issue;
 
-	/**
-	 * @param int $issueId
-	 * @return Issue
-	 * @throws IssueNotFoundException
-	 */
-	public function findById(int $issueId): Issue;
+    /**
+     * @param int $issueId
+     * @return Issue
+     * @throws IssueNotFoundException
+     */
+    public function findById(int $issueId): Issue;
 
-	/**
-	 * @param int $issueId
-	 * @param Issue $issue
-	 * @throws FailIssueUpdateException
-	 */
-	public function update(int $issueId, Issue $issue): void;
+    /**
+     * @param int $issueId
+     * @param Issue $issue
+     * @throws FailIssueUpdateException
+     */
+    public function update(int $issueId, Issue $issue): void;
 }

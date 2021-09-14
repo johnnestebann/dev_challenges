@@ -8,8 +8,8 @@ use Exception;
 
 final class FailIssueCreationException extends Exception
 {
-	public function __construct()
-	{
-		parent::__construct('Issue could not be created.');
-	}
+    public function __construct()
+    {
+        parent::__construct('Issue could not be created.');
+    }
 }
