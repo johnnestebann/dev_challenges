@@ -19,26 +19,6 @@ services:
     networks:
       - challenge
 
-  frontend:
-    image: "node:12"
-    container_name: frontend
-    volumes:
-      - "./frontend/:/home/node/app"
-    expose:
-      - "8080"
-    command: bash -c "
-      npm ci && npm run serve
-      "
-    working_dir: /home/node/app
-    ports:
-      - "8080:8080"
-    links:
-      - backend
-    depends_on:
-      - backend
-    networks:
-      - challenge
-
   redis:
     image: redis:alpine
     container_name: redis
