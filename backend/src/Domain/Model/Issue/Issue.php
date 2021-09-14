@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Workana\Domain\Model\Issue;
 
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 class Issue
 {
@@ -15,10 +14,14 @@ class Issue
 
 	private string $status;
 
+	/** @var array[]  */
 	private array $members;
 
 	private int $avg;
 
+	/**
+	 * @param array[] $members
+	 */
 	private function __construct(string $status = 'voting', array $members = [], int $avg = 0)
 	{
 		$this->status = $status;
@@ -27,12 +30,8 @@ class Issue
 	}
 
 	/**
-	 * @param string $status
-	 * @param array $members
-	 * @param int $avg
-	 * @return static
+	 * @param array[] $members
 	 */
-	#[Pure]
 	public static function create(string $status = 'voting', array $members = [], int $avg = 0): self
 	{
 		return new self($status, $members, $avg);
@@ -48,6 +47,9 @@ class Issue
 		$this->status = $status;
 	}
 
+	/**
+	 * @return array[]
+	 */
 	public function getMembers(): array
 	{
 		if (self::VOTING === $this->status) {
@@ -144,7 +146,9 @@ class Issue
 		$this->avg = 0 !== $validMembers ? (int) ($avg / $validMembers) : 0;
 	}
 
-	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
+	/**
+	 * @return array<string, array<array>|int|string>
+	 */
 	public function toFullArray(): array
 	{
 		return [
@@ -154,7 +158,9 @@ class Issue
 		];
 	}
 
-	#[ArrayShape(["status" => "string", "members" => "array", "avg" => "int"])]
+	/**
+	 * @return array<string, array<array>|int|string>
+	 */
 	public function toArray(): array
 	{
 		return [

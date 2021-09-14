@@ -49,7 +49,7 @@ final class JoinOrCreateIssueAction
 	public function __invoke(int $issueId, Request $request): JsonResponse
 	{
 		try {
-			$data = ($this->payloadRequestParserService)($request->getContent());
+			$data = ($this->payloadRequestParserService)((string) $request->getContent());
 
 			if (empty($data) || empty($data['name'])) {
 				throw new InvalidMemberException();

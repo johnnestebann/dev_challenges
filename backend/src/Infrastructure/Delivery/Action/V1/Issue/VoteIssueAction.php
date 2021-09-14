@@ -40,7 +40,7 @@ final class VoteIssueAction
 	public function __invoke(int $issueId, Request $request): JsonResponse
 	{
 		try {
-			$data = ($this->payloadRequestParserService)($request->getContent());
+			$data = ($this->payloadRequestParserService)((string) $request->getContent());
 
 			if (empty($data) || empty($data['vote'])) {
 				throw new InvalidVoteValueException();

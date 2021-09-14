@@ -1,13 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Workana\Domain\Model\Issue\Exception;
 
 use Exception;
-use JetBrains\PhpStorm\Pure;
 
 class MemberAlreadyJoinedException extends Exception
 {
-	#[Pure]
 	public function __construct(string $username, int $issueId)
 	{
 		parent::__construct(

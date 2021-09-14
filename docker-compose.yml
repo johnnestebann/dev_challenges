@@ -6,8 +6,6 @@ services:
     container_name: backend
     environment:
       STARTUP_COMMAND_1: composer install
-      #Switch it on for debug
-      #PHP_EXTENSION_XDEBUG: 1
     volumes:
       - "./backend/:/app"
     working_dir: /app
@@ -48,18 +46,6 @@ services:
       - "6379:6379"
     volumes:
       - redis:/data
-    networks:
-      - challenge
-
-  commander:
-    image: rediscommander/redis-commander
-    container_name: commander
-    environment:
-      - REDIS_HOSTS=local:redis:6379:1
-    links:
-      - redis
-    ports:
-      - "8081:8081"
     networks:
       - challenge
 
