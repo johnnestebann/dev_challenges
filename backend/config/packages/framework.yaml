@@ -17,6 +17,8 @@ framework:
   php_errors:
     log: true
 
+  error_controller: Workana\Infrastructure\Delivery\Action\V1\Error\ErrorAction
+
 when@test:
   framework:
     test: true

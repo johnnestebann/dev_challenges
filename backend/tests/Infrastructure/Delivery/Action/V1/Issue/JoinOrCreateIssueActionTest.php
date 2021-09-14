@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace Workana\Tests\Infrastructure\Delivery\Action\V1\Issue;
 
-use JetBrains\PhpStorm\NoReturn;
 use JsonException;
 use ReflectionException;
 use Symfony\Component\HttpFoundation\Request;
+use Workana\Domain\Model\Issue\Exception\FailIssueCreationException;
+use Workana\Domain\Model\Issue\Exception\FailIssueUpdateException;
+use Workana\Domain\Model\Issue\Exception\InvalidMemberException;
+use Workana\Domain\Model\Issue\Exception\IssueNotVotingException;
+use Workana\Domain\Model\Issue\Exception\MemberAlreadyJoinedException;
 use Workana\Tests\Domain\Model\Issue\IssueMother;
 
 class JoinOrCreateIssueActionTest extends IssueServiceActionTest
@@ -15,8 +19,12 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
     /**
      * @throws JsonException
      * @throws ReflectionException
+     * @throws FailIssueCreationException
+     * @throws FailIssueUpdateException
+     * @throws InvalidMemberException
+     * @throws IssueNotVotingException
+     * @throws MemberAlreadyJoinedException
      */
-    #[NoReturn]
     public function testCreateIssueWhenNotExistsWithValidMember(): void
     {
         $issueMother = IssueMother::voting();
@@ -30,7 +38,7 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
         $jsonResponse = ($this->joinOrCreateIssueAction)(2, $request);
 
-        $response = json_decode($jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $response = json_decode((string) $jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertNotEmpty($response['data']['members']['Esteban']);
         $this->assertEquals('waiting', $response['data']['members']['Esteban']['status']);
@@ -38,74 +46,77 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
     }
 
     /**
+     * @throws FailIssueCreationException
+     * @throws FailIssueUpdateException
+     * @throws InvalidMemberException
+     * @throws IssueNotVotingException
      * @throws JsonException
+     * @throws MemberAlreadyJoinedException
      * @throws ReflectionException
      */
-    #[NoReturn]
     public function testNotCreateOrJoinIssueWithInvalidMember(): void
     {
         $issueMother = IssueMother::voting();
         $payload = [];
 
+        $this->expectException(InvalidMemberException::class);
+
         $this->payloadRequestParserService->method('__invoke')
             ->willReturn($payload);
 
         $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
-        $jsonResponse = ($this->joinOrCreateIssueAction)(2, $request);
-
-        $response = json_decode($jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        $this->assertEquals('ERROR', $response['status']);
-        $this->assertEquals('Invalid member.', $response['message']);
+        ($this->joinOrCreateIssueAction)(2, $request);
     }
 
     /**
+     * @throws FailIssueCreationException
+     * @throws FailIssueUpdateException
+     * @throws InvalidMemberException
+     * @throws IssueNotVotingException
      * @throws JsonException
+     * @throws MemberAlreadyJoinedException
      * @throws ReflectionException
      */
-    #[NoReturn]
     public function testNotCreateOrJoinIssueWithAlreadyJoinedMember(): void
     {
         $issueMother = IssueMother::voting();
         $payload = ["name" => "John"];
 
+        $this->expectException(MemberAlreadyJoinedException::class);
+
         $this->payloadRequestParserService->method('__invoke')
             ->willReturn($payload);
 
         $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
-        $jsonResponse = ($this->joinOrCreateIssueAction)(1, $request);
-
-        $response = json_decode($jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        $this->assertEquals('ERROR', $response['status']);
-        $this->assertEquals('Member \'John\' already joined to Issue with ID \'1\'.', $response['message']);
+        ($this->joinOrCreateIssueAction)(1, $request);
     }
 
     /**
+     * @throws FailIssueCreationException
+     * @throws FailIssueUpdateException
+     * @throws InvalidMemberException
+     * @throws IssueNotVotingException
      * @throws JsonException
+     * @throws MemberAlreadyJoinedException
      * @throws ReflectionException
      */
-    #[NoReturn]
     public function testNotCreateOrJoinNewMemberOnRevealedIssue(): void
     {
         $issueMother = IssueMother::reveal();
         $payload = ["name" => "Esteban"];
 
+        $this->expectException(IssueNotVotingException::class);
+
         $this->payloadRequestParserService->method('__invoke')
             ->willReturn($payload);
 
         $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
-        $jsonResponse = ($this->joinOrCreateIssueAction)(1, $request);
-
-        $response = json_decode($jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
-
-        $this->assertEquals('ERROR', $response['status']);
-        $this->assertEquals('Issue with ID \'1\' is not voting.', $response['message']);
+        ($this->joinOrCreateIssueAction)(1, $request);
     }
 }

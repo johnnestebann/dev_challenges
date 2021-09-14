@@ -42,7 +42,6 @@ abstract class IssueServiceActionTest extends TestCase
 
         $this->getIssueStatusAction = new GetIssueStatusAction(
             new GetIssueByIdService($this->issueRepository),
-            new ErrorJsonResponse(),
             new IssueJsonResponse()
         );
 
@@ -51,14 +50,12 @@ abstract class IssueServiceActionTest extends TestCase
             new CreateIssueService($this->issueRepository),
             $this->payloadRequestParserService,
             new JoinIssueService($this->issueRepository),
-            new ErrorJsonResponse(),
             new IssueJsonResponse()
         );
 
         $this->voteIssueAction = new VoteIssueAction(
             $this->payloadRequestParserService,
             $this->voteIssueService,
-            new ErrorJsonResponse(),
             new IssueJsonResponse()
         );
     }

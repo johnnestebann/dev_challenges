@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Workana\Tests\Application\Service\V1\Issue;
 
-use JetBrains\PhpStorm\NoReturn;
 use ReflectionException;
 use Workana\Application\Service\V1\Issue\VoteIssueService;
 use Workana\Domain\Model\Issue\Exception\FailIssueUpdateException;
@@ -24,7 +23,6 @@ class VoteIssueServiceTest extends IssueServiceTest
      * @throws MemberAlreadyVotedOrPassedIssueException
      * @throws MemberNotJoinedToIssueException
      */
-    #[NoReturn]
     public function testValidMemberVoteValidIssue(): void
     {
         $issueMother = IssueMother::voting();
@@ -49,7 +47,6 @@ class VoteIssueServiceTest extends IssueServiceTest
      * @throws MemberAlreadyVotedOrPassedIssueException
      * @throws MemberNotJoinedToIssueException
      */
-    #[NoReturn]
     public function testFailMemberNotJoinedTryingToVoteIssue(): void
     {
         $issueMother = IssueMother::voting();
@@ -72,7 +69,6 @@ class VoteIssueServiceTest extends IssueServiceTest
      * @throws MemberAlreadyVotedOrPassedIssueException
      * @throws MemberNotJoinedToIssueException
      */
-    #[NoReturn]
     public function testFailValidMemberTryingToVoteIssueAgain(): void
     {
         $issueMother = IssueMother::voting();
@@ -95,7 +91,6 @@ class VoteIssueServiceTest extends IssueServiceTest
      * @throws MemberAlreadyVotedOrPassedIssueException
      * @throws MemberNotJoinedToIssueException
      */
-    #[NoReturn]
     public function testFailValidMemberTryingToVoteRevealedIssue(): void
     {
         $issueMother = IssueMother::reveal();
