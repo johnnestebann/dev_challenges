@@ -25,10 +25,10 @@ final class RedisIssueRepository implements IssueRepositoryInterface
     /**
      * @throws FailIssueCreationException
      */
-    public function create(int $issueId): Issue
+    public function create(int $issueId, string $status = 'voting', array $members = [], int $avg = 0): Issue
     {
         try {
-            $issue = Issue::create();
+            $issue = Issue::create($status, $members, $avg);
 
             $key = 'issue#' . $issueId;
             $value = json_encode($issue->toFullArray(), JSON_THROW_ON_ERROR);

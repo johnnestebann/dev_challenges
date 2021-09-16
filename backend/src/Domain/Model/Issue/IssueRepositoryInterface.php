@@ -12,10 +12,13 @@ interface IssueRepositoryInterface
 {
     /**
      * @param int $issueId
+     * @param string $status
+     * @param array $members
+     * @param int $avg
      * @return Issue
      * @throws FailIssueCreationException
      */
-    public function create(int $issueId): Issue;
+    public function create(int $issueId, string $status = 'voting', array $members = [], int $avg = 0): Issue;
 
     /**
      * @param int $issueId

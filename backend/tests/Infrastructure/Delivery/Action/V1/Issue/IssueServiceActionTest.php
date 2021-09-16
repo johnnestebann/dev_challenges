@@ -2,7 +2,6 @@
 
 namespace Workana\Tests\Infrastructure\Delivery\Action\V1\Issue;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Workana\Application\Service\V1\Issue\CreateIssueService;
 use Workana\Application\Service\V1\Issue\GetIssueByIdService;
@@ -15,16 +14,22 @@ use Workana\Infrastructure\Delivery\Action\V1\Issue\VoteIssueAction;
 use Workana\Infrastructure\Delivery\Request\PayloadRequestParserService;
 use Workana\Infrastructure\Delivery\Response\Json\V1\Error\ErrorJsonResponse;
 use Workana\Infrastructure\Delivery\Response\Json\V1\Issue\IssueJsonResponse;
+use Workana\Infrastructure\Persistence\Redis\Repository\RedisIssueRepository;
+use Workana\Infrastructure\Persistence\Redis\Service\RedisConnectionService;
 
 abstract class IssueServiceActionTest extends TestCase
 {
-    protected MockObject|IssueRepositoryInterface $issueRepository;
+    protected IssueRepositoryInterface $issueRepository;
 
-    protected MockObject|GetIssueByIdService $getIssueByIdService;
+    protected GetIssueByIdService $getIssueByIdService;
 
-    protected MockObject|PayloadRequestParserService $payloadRequestParserService;
+    protected CreateIssueService $createIssueService;
 
-    protected MockObject|VoteIssueService $voteIssueService;
+    protected JoinIssueService $joinIssueService;
+
+    protected VoteIssueService $voteIssueService;
+
+    protected PayloadRequestParserService $payloadRequestParserService;
 
     protected GetIssueStatusAction $getIssueStatusAction;
 
@@ -32,31 +37,47 @@ abstract class IssueServiceActionTest extends TestCase
 
     protected VoteIssueAction $voteIssueAction;
 
+    protected ErrorJsonResponse $errorJsonResponse;
+
+    protected IssueJsonResponse $issueJsonResponse;
+
     protected function setUp(): void
     {
-        $this->issueRepository = $this->createMock(IssueRepositoryInterface::class);
+        $this->issueRepository = new RedisIssueRepository(
+            new RedisConnectionService()
+        );
 
-        $this->payloadRequestParserService = $this->createMock(PayloadRequestParserService::class);
-        $this->getIssueByIdService = $this->createMock(GetIssueByIdService::class);
-        $this->voteIssueService = $this->createMock(VoteIssueService::class);
+        $this->payloadRequestParserService = new PayloadRequestParserService();
+
+        $this->getIssueByIdService = new GetIssueByIdService($this->issueRepository);
+        $this->createIssueService = new CreateIssueService($this->issueRepository);
+        $this->joinIssueService = new JoinIssueService($this->issueRepository);
+        $this->voteIssueService = new VoteIssueService(
+            $this->getIssueByIdService,
+            $this->issueRepository
+        );
+
+        $this->errorJsonResponse = new ErrorJsonResponse();
+        $this->issueJsonResponse = new IssueJsonResponse();
+
 
         $this->getIssueStatusAction = new GetIssueStatusAction(
-            new GetIssueByIdService($this->issueRepository),
-            new IssueJsonResponse()
+            $this->getIssueByIdService,
+            $this->issueJsonResponse
         );
 
         $this->joinOrCreateIssueAction = new JoinOrCreateIssueAction(
             $this->getIssueByIdService,
-            new CreateIssueService($this->issueRepository),
+            $this->createIssueService,
             $this->payloadRequestParserService,
-            new JoinIssueService($this->issueRepository),
-            new IssueJsonResponse()
+            $this->joinIssueService,
+            $this->issueJsonResponse
         );
 
         $this->voteIssueAction = new VoteIssueAction(
             $this->payloadRequestParserService,
             $this->voteIssueService,
-            new IssueJsonResponse()
+            $this->issueJsonResponse
         );
     }
 }

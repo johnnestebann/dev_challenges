@@ -30,13 +30,10 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
         $issueMother = IssueMother::voting();
         $payload = ["name" => "Esteban"];
 
-        $this->payloadRequestParserService->method('__invoke')
-            ->willReturn($payload);
-
-        $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
+        $this->issueRepository->create(1, $issueMother->getStatus(), $issueMother->toFullArray()['members'], $issueMother->getAvg());
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
-        $jsonResponse = ($this->joinOrCreateIssueAction)(2, $request);
+        $jsonResponse = ($this->joinOrCreateIssueAction)(1, $request);
 
         $response = json_decode((string) $jsonResponse->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
@@ -59,12 +56,9 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
         $issueMother = IssueMother::voting();
         $payload = [];
 
+        $this->issueRepository->create(1, $issueMother->getStatus(), $issueMother->toFullArray()['members'], $issueMother->getAvg());
+
         $this->expectException(InvalidMemberException::class);
-
-        $this->payloadRequestParserService->method('__invoke')
-            ->willReturn($payload);
-
-        $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
         ($this->joinOrCreateIssueAction)(2, $request);
@@ -84,12 +78,9 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
         $issueMother = IssueMother::voting();
         $payload = ["name" => "John"];
 
+        $this->issueRepository->create(1, $issueMother->getStatus(), $issueMother->toFullArray()['members'], $issueMother->getAvg());
+
         $this->expectException(MemberAlreadyJoinedException::class);
-
-        $this->payloadRequestParserService->method('__invoke')
-            ->willReturn($payload);
-
-        $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
         ($this->joinOrCreateIssueAction)(1, $request);
@@ -109,12 +100,9 @@ class JoinOrCreateIssueActionTest extends IssueServiceActionTest
         $issueMother = IssueMother::reveal();
         $payload = ["name" => "Esteban"];
 
+        $this->issueRepository->create(1, $issueMother->getStatus(), $issueMother->toFullArray()['members'], $issueMother->getAvg());
+
         $this->expectException(IssueNotVotingException::class);
-
-        $this->payloadRequestParserService->method('__invoke')
-            ->willReturn($payload);
-
-        $this->getIssueByIdService->method('__invoke')->willReturn($issueMother);
 
         $request = new Request(content: json_encode($payload, JSON_THROW_ON_ERROR));
         ($this->joinOrCreateIssueAction)(1, $request);
