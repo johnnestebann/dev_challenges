@@ -26,8 +26,8 @@ class JoinIssueServiceTest extends IssueServiceTest
 
         $this->issueRepository->method('update');
 
-        $getIssueByIdService = new JoinIssueService($this->issueRepository);
-        ($getIssueByIdService)(1, $issue, $username);
+        $joinIssueService = new JoinIssueService($this->issueRepository);
+        ($joinIssueService)(1, $issue, $username);
 
         $this->assertNotEmpty($issue->getMembers()['Peter']);
         $this->assertSame('waiting', $issue->getMembers()['Peter']['status']);
@@ -50,8 +50,8 @@ class JoinIssueServiceTest extends IssueServiceTest
 
         $this->issueRepository->method('update');
 
-        $getIssueByIdService = new JoinIssueService($this->issueRepository);
-        ($getIssueByIdService)(1, $issue, $username);
+        $joinIssueService = new JoinIssueService($this->issueRepository);
+        ($joinIssueService)(1, $issue, $username);
     }
 
     /**
@@ -69,7 +69,7 @@ class JoinIssueServiceTest extends IssueServiceTest
 
         $this->issueRepository->method('update');
 
-        $getIssueByIdService = new JoinIssueService($this->issueRepository);
-        ($getIssueByIdService)(1, $issue, $username);
+        $joinIssueService = new JoinIssueService($this->issueRepository);
+        ($joinIssueService)(1, $issue, $username);
     }
 }
