@@ -17,8 +17,8 @@ a Redis para persistencia (Repositorio)
 - En la capa de aplicación (`Workana\Application\Service\V1\Issue`) se encuentran los servicios/colaboradores que gestionan
 al dominio para resolver sus funciones únicas. Nótese que se utiliza inversión de dependencia para inyectar una interfaz
 de dominio que está implementada en infraestructura. De esta manera, sin conocer infraestructura, aplicación puede utilizar
-un contrato de infraestructura definido en dominio, permitiendo un alto desacople de infraestructura y potenciales
-implementaciones diferentes. También están las validaciones que disparan las excepciones de dominio.
+una implementación de infraestructura definida en un contrato de dominio, permitiendo un alto desacople de infraestructura.
+También se encuentran las validaciones que disparan las excepciones de dominio.
 - En la capa de dominio (`Workana\Domain\Model\Issue`) tenemos la lógica de negocio, las entidades y su comportamiento.
 También existen los contratos que se implementarán en infraestructura y las excepciones de dominio. Se utiliza named
 constructors.
